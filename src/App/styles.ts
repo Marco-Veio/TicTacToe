@@ -33,4 +33,7 @@ export const Button = styled.button`
   :hover {
     opacity: 0.9;
   }
+  color: white;
+  font-size: calc(50px + 2vmin);
+  font-family: "Tahoma";
 `;

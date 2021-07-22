@@ -8,6 +8,8 @@ import { Screen, Table, Button } from "./styles";
  * @returns Tela
  */
 const App = () => {
+  // Jogador atual (false = O, true = X)
+  const [player, setPlayer] = useState(false);
   // Tabuleiro
   const [table, setTable] = useState([
     ["", "", ""],
@@ -15,16 +17,29 @@ const App = () => {
     ["", "", ""],
   ]);
 
+  const selectPosition = (row: number, column: number) => {
+    const temp = [...table];
+    if (!temp[row][column]) {
+      temp[row][column] = player ? "X" : "O";
+      setPlayer(!player);
+    }
+    setTable(temp);
+  };
+
   return (
     // Tela
     <Screen>
       {/* Tabuleiro */}
       <Table>
         {/* Adiciona cada posição do tabuleiro */}
-        {table.map((row) => {
-          const components = row.map((column) => {
+        {table.map((row, rowIndex) => {
+          const components = row.map((column, columnIndex) => {
             // Botão de cada posição
-            return <Button>{column}</Button>;
+            return (
+              <Button onClick={() => selectPosition(rowIndex, columnIndex)}>
+                {column}
+              </Button>
+            );
           });
           return components;
         })}

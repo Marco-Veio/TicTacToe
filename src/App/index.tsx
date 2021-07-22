@@ -17,13 +17,23 @@ const App = () => {
     ["", "", ""],
   ]);
 
+  /**
+   * Função para selecionar uma posição
+   * @param row Número da linha da posição desejada
+   * @param column Número da coluna da posição desejada
+   */
   const selectPosition = (row: number, column: number) => {
+    // Cria cópia do tabuleiro
     const temp = [...table];
+    // Se a posição desejada não estiver ocupada
     if (!temp[row][column]) {
+      // Seleciona posição de acordo com o jogador da vez
       temp[row][column] = player ? "X" : "O";
+      // Muda de jogador
       setPlayer(!player);
+      // Atualiza tabuleiro
+      setTable(temp);
     }
-    setTable(temp);
   };
 
   return (
@@ -36,7 +46,13 @@ const App = () => {
           const components = row.map((column, columnIndex) => {
             // Botão de cada posição
             return (
-              <Button onClick={() => selectPosition(rowIndex, columnIndex)}>
+              <Button
+                // Seleciona posição ao clicar
+                onClick={() => selectPosition(rowIndex, columnIndex)}
+                // Desabilitado quando já foi selecionada
+                disabled={Boolean(table[rowIndex][columnIndex])}
+              >
+                {/* Jogador que selecionou */}
                 {column}
               </Button>
             );

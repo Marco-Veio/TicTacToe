@@ -23,8 +23,10 @@ const App = () => {
         {/* Adiciona cada posição do tabuleiro */}
         {table.map((row) => {
           const components = row.map((column) => {
+            // Botão de cada posição
             return <Button>{column}</Button>;
           });
+          return components;
         })}
       </Table>
     </Screen>

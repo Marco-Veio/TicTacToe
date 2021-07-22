@@ -27,7 +27,7 @@ export const Table = styled.div`
 `;
 
 // Botões para selecionar posição
-export const Button = styled.div`
+export const Button = styled.button`
   background-color: #474b53;
   cursor: pointer;
   :hover {

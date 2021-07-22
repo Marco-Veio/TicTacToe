@@ -1,5 +1,5 @@
 // Import módulos
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // Import componentes estilizados
 import { Screen, Table, Button } from "./styles";
 
@@ -8,6 +8,8 @@ import { Screen, Table, Button } from "./styles";
  * @returns Tela
  */
 const App = () => {
+  // Jogo iniciado
+  const [started, setStarted] = useState(false);
   // Jogador atual (false = O, true = X)
   const [player, setPlayer] = useState(false);
   // Tabuleiro
@@ -16,6 +18,48 @@ const App = () => {
     ["", "", ""],
     ["", "", ""],
   ]);
+  // Vencedor
+  const [winner, setWinner] = useState("");
+
+  /**
+   * Função para verificar se alguém venceu
+   */
+  useEffect(() => {
+    // Se o jogo iniciou
+    if (started) {
+      // Para cada linha
+      for (const row of table) {
+        // Se a linha estiver completa por um jogador
+        if (row[0] === row[1] && row[1] === row[2]) {
+          // Define-o como vencedor
+          setWinner(row[0]);
+          // Sai da função
+          return;
+        }
+      }
+      // Para cada coluna
+      for (const column in table[0]) {
+        // Se a coluna estiver completa por um jogador
+        if (
+          table[0][column] === table[1][column] &&
+          table[1][column] === table[2][column]
+        ) {
+          // Define-o como vencedor
+          setWinner(table[0][column]);
+          // Sai da função
+          return;
+        }
+      }
+      // Se uma diagonal estiver completa por um jogador
+      if (
+        (table[0][0] === table[1][1] && table[1][1] === table[2][2]) ||
+        (table[0][2] === table[1][1] && table[1][1] === table[2][0])
+      ) {
+        // Define-o como vencedor
+        setWinner(table[1][1]);
+      }
+    }
+  }, [table]);
 
   /**
    * Função para selecionar uma posição
@@ -23,6 +67,11 @@ const App = () => {
    * @param column Número da coluna da posição desejada
    */
   const selectPosition = (row: number, column: number) => {
+    // Se for a primeira jogada
+    if (!started) {
+      // Inicia o jogo
+      setStarted(true);
+    }
     // Cria cópia do tabuleiro
     const temp = [...table];
     // Se a posição desejada não estiver ocupada
@@ -49,8 +98,10 @@ const App = () => {
               <Button
                 // Seleciona posição ao clicar
                 onClick={() => selectPosition(rowIndex, columnIndex)}
-                // Desabilitado quando já foi selecionada
-                disabled={Boolean(table[rowIndex][columnIndex])}
+                // Desabilitado quando já foi selecionada ou quando acabou o jogo
+                disabled={
+                  Boolean(table[rowIndex][columnIndex]) || Boolean(winner)
+                }
               >
                 {/* Jogador que selecionou */}
                 {column}

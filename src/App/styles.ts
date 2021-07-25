@@ -4,6 +4,7 @@ import styled from "styled-components";
 export const Screen = styled.div`
   width: 100vw;
   height: 100vh;
+  overflow: auto;
   background-color: #474b53;
   display: flex;
   flex-direction: column;
@@ -54,12 +55,20 @@ export const Play = styled.button`
     opacity: 0.7;
   }
 `;
+// Vencedor
+export const Winner = styled.h1`
+  color: white;
+  font-size: calc(15px + 2vmin);
+  font-family: "Tahoma";
+`;
 
 // Tabuleiro do jogo
 export const Table = styled.div`
   grid-template: table;
   width: 50vh;
   height: 50vh;
+  min-width: calc(105px + 3.2vh);
+  min-height: calc(105px + 3.2vh);
   background-color: #000000;
   box-shadow: 3px 3px 0 1px rgba(0, 0, 0, 0.2);
   display: grid;
@@ -73,10 +82,12 @@ export const Table = styled.div`
 `;
 // Botões para selecionar posição
 export const Button = styled.button`
+  min-height: calc(35px + 3vh);
+  min-width: calc(35px + 3vh);
   background-color: #474b53;
   cursor: pointer;
   color: white;
-  font-size: calc(50px + 2vmin);
+  font-size: calc(30px + 3vh);
   font-family: "Tahoma";
   :hover {
     opacity: 0.9;
@@ -84,11 +95,4 @@ export const Button = styled.button`
   :disabled {
     cursor: not-allowed;
   }
-`;
-
-// Posição direita do corpo
-export const Winner = styled.h1`
-  color: white;
-  font-size: calc(50px + 2vmin);
-  font-family: "Tahoma";
 `;

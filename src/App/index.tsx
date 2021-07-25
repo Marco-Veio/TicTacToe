@@ -17,8 +17,8 @@ import {
  * @returns Tela
  */
 const App = () => {
-  // Jogador atual (false = O, true = X)
-  const [player, setPlayer] = useState(false);
+  // Número de jogadas
+  const [plays, setPlays] = useState(0);
   // Tabuleiro
   const [table, setTable] = useState([
     ["", "", ""],
@@ -32,30 +32,36 @@ const App = () => {
    * Função para verificar se alguém venceu
    */
   useEffect(() => {
-    // Se uma diagonal estiver completa por um jogador
-    if (
-      (table[0][0] === table[1][1] && table[1][1] === table[2][2]) ||
-      (table[0][2] === table[1][1] && table[1][1] === table[2][0])
-    ) {
-      // Define-o como vencedor
-      setWinner(table[1][1]);
-      // Senão
+    // Se atingiram 9 jogadas
+    if (plays === 9) {
+      // Define velha
+      setWinner("Draw");
     } else {
-      // Para cada linha e coluna
-      for (const index in table[0]) {
-        // Se a linha estiver completa por um jogador
-        if (
-          table[index][0] === table[index][1] &&
-          table[index][1] === table[index][2]
-        ) {
-          // Define-o como vencedor
-          setWinner(table[index][0]);
-          // Sai da função
-          break;
-          // Senão
-        } else {
+      // Se uma diagonal estiver completa por um jogador
+      if (
+        (table[0][0] === table[1][1] && table[1][1] === table[2][2]) ||
+        (table[0][2] === table[1][1] && table[1][1] === table[2][0])
+      ) {
+        // Define-o como vencedor
+        setWinner(table[1][1]);
+        // Senão
+      } else {
+        // Para cada linha e coluna
+        for (const index in table[0]) {
+          // Se a linha estiver completa por um jogador
+          if (
+            table[index][0] !== "" &&
+            table[index][0] === table[index][1] &&
+            table[index][1] === table[index][2]
+          ) {
+            // Define-o como vencedor
+            setWinner(table[index][0]);
+            // Sai da função
+            break;
+          }
           // Se a coluna estiver completa por um jogador
           if (
+            table[0][index] !== "" &&
             table[0][index] === table[1][index] &&
             table[1][index] === table[2][index]
           ) {
@@ -80,9 +86,10 @@ const App = () => {
     // Se a posição desejada não estiver ocupada
     if (!temp[row][column]) {
       // Seleciona posição de acordo com o jogador da vez
-      temp[row][column] = player ? "X" : "O";
+      // Número de jogadas par = jogador O, número de jogadas ímpar = jogador X
+      temp[row][column] = plays % 2 ? "X" : "O";
       // Muda de jogador
-      setPlayer(!player);
+      setPlays(plays + 1);
       // Atualiza tabuleiro
       setTable(temp);
     }
@@ -98,8 +105,8 @@ const App = () => {
       ["", "", ""],
       ["", "", ""],
     ]);
-    // Define jogador como O
-    setPlayer(false);
+    // Reinicia jogadas e define jogador como O
+    setPlays(0);
   };
 
   return (
@@ -137,7 +144,7 @@ const App = () => {
           })}
         </Table>
         <Aside>
-          {Boolean(winner) && <h1>Winner</h1>}
+          {Boolean(winner) && winner !== "Draw" && <h1>Winner</h1>}
           {<Winner>{winner}</Winner>}
         </Aside>
       </Body>

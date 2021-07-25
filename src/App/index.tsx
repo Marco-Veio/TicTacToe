@@ -1,15 +1,22 @@
 // Import módulos
 import React, { useEffect, useState } from "react";
 // Import componentes estilizados
-import { Screen, Table, Button } from "./styles";
+import {
+  Screen,
+  Header,
+  Table,
+  Button,
+  Body,
+  Aside,
+  Winner,
+  Play,
+} from "./styles";
 
 /**
  * Componente da página
  * @returns Tela
  */
 const App = () => {
-  // Jogo iniciado
-  const [started, setStarted] = useState(false);
   // Jogador atual (false = O, true = X)
   const [player, setPlayer] = useState(false);
   // Tabuleiro
@@ -25,38 +32,39 @@ const App = () => {
    * Função para verificar se alguém venceu
    */
   useEffect(() => {
-    // Se o jogo iniciou
-    if (started) {
-      // Para cada linha
-      for (const row of table) {
+    // Se uma diagonal estiver completa por um jogador
+    if (
+      (table[0][0] === table[1][1] && table[1][1] === table[2][2]) ||
+      (table[0][2] === table[1][1] && table[1][1] === table[2][0])
+    ) {
+      // Define-o como vencedor
+      setWinner(table[1][1]);
+      // Senão
+    } else {
+      // Para cada linha e coluna
+      for (const index in table[0]) {
         // Se a linha estiver completa por um jogador
-        if (row[0] === row[1] && row[1] === row[2]) {
-          // Define-o como vencedor
-          setWinner(row[0]);
-          // Sai da função
-          return;
-        }
-      }
-      // Para cada coluna
-      for (const column in table[0]) {
-        // Se a coluna estiver completa por um jogador
         if (
-          table[0][column] === table[1][column] &&
-          table[1][column] === table[2][column]
+          table[index][0] === table[index][1] &&
+          table[index][1] === table[index][2]
         ) {
           // Define-o como vencedor
-          setWinner(table[0][column]);
+          setWinner(table[index][0]);
           // Sai da função
-          return;
+          break;
+          // Senão
+        } else {
+          // Se a coluna estiver completa por um jogador
+          if (
+            table[0][index] === table[1][index] &&
+            table[1][index] === table[2][index]
+          ) {
+            // Define-o como vencedor
+            setWinner(table[0][index]);
+            // Sai da função
+            break;
+          }
         }
-      }
-      // Se uma diagonal estiver completa por um jogador
-      if (
-        (table[0][0] === table[1][1] && table[1][1] === table[2][2]) ||
-        (table[0][2] === table[1][1] && table[1][1] === table[2][0])
-      ) {
-        // Define-o como vencedor
-        setWinner(table[1][1]);
       }
     }
   }, [table]);
@@ -67,11 +75,6 @@ const App = () => {
    * @param column Número da coluna da posição desejada
    */
   const selectPosition = (row: number, column: number) => {
-    // Se for a primeira jogada
-    if (!started) {
-      // Inicia o jogo
-      setStarted(true);
-    }
     // Cria cópia do tabuleiro
     const temp = [...table];
     // Se a posição desejada não estiver ocupada
@@ -85,32 +88,59 @@ const App = () => {
     }
   };
 
+  /**
+   * Reinicia jogo
+   */
+  const reset = () => {
+    // Limpa o tabuleiro
+    setTable([
+      ["", "", ""],
+      ["", "", ""],
+      ["", "", ""],
+    ]);
+    // Define jogador como O
+    setPlayer(false);
+  };
+
   return (
     // Tela
     <Screen>
-      {/* Tabuleiro */}
-      <Table>
-        {/* Adiciona cada posição do tabuleiro */}
-        {table.map((row, rowIndex) => {
-          const components = row.map((column, columnIndex) => {
-            // Botão de cada posição
-            return (
-              <Button
-                // Seleciona posição ao clicar
-                onClick={() => selectPosition(rowIndex, columnIndex)}
-                // Desabilitado quando já foi selecionada ou quando acabou o jogo
-                disabled={
-                  Boolean(table[rowIndex][columnIndex]) || Boolean(winner)
-                }
-              >
-                {/* Jogador que selecionou */}
-                {column}
-              </Button>
-            );
-          });
-          return components;
-        })}
-      </Table>
+      {/* Título */}
+      <Header>Tic Tac Toe</Header>
+      {/* Corpo da tela */}
+      <Body>
+        <Aside>
+          <Play onClick={reset}>Play</Play>
+        </Aside>
+        {/* Tabuleiro */}
+        <Table>
+          {/* Adiciona cada posição do tabuleiro */}
+          {table.map((row, rowIndex) => {
+            const components = row.map((column, columnIndex) => {
+              // Botão de cada posição
+              return (
+                <Button
+                  key={`${rowIndex}${columnIndex}`}
+                  // Seleciona posição ao clicar
+                  onClick={() => selectPosition(rowIndex, columnIndex)}
+                  // Desabilitado quando já foi selecionada ou quando acabou o jogo
+                  disabled={
+                    Boolean(table[rowIndex][columnIndex]) || Boolean(winner)
+                  }
+                >
+                  {/* Jogador que selecionou */}
+                  {column}
+                </Button>
+              );
+            });
+            return components;
+          })}
+        </Table>
+        <Aside>
+          {Boolean(winner) && <h1>Winner</h1>}
+          {<Winner>{winner}</Winner>}
+        </Aside>
+      </Body>
     </Screen>
   );
 };

@@ -2,14 +2,15 @@
 import React, { useEffect, useState } from "react";
 // Import componentes estilizados
 import {
-  Screen,
-  Header,
-  Table,
-  Button,
-  Body,
   Aside,
-  Winner,
+  Body,
+  Button,
+  Header,
   Play,
+  Screen,
+  Table,
+  Winner,
+  WinnerLabel,
 } from "./styles";
 
 /**
@@ -144,8 +145,10 @@ const App = () => {
           })}
         </Table>
         <Aside>
-          {Boolean(winner) && winner !== "Draw" && <h1>Winner</h1>}
-          {<Winner>{winner}</Winner>}
+          {Boolean(winner) && winner !== "Draw" && (
+            <WinnerLabel>Winner</WinnerLabel>
+          )}
+          {Boolean(winner) && <Winner>{winner}</Winner>}
         </Aside>
       </Body>
     </Screen>

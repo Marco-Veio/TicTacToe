@@ -1,4 +1,18 @@
-import styled from "styled-components";
+// Import módulos
+import styled, { keyframes } from "styled-components";
+
+// Animação de aparecer aos poucos o vencedor
+const appearing = keyframes`
+  from {
+    opacity: 0;
+    font-size: 0;
+
+  }
+  to {
+    opacity: 1;
+    font-size: calc(15px + 2vmin);
+  }
+`;
 
 // Componente da tela
 export const Screen = styled.div`
@@ -60,6 +74,15 @@ export const Winner = styled.h1`
   color: white;
   font-size: calc(15px + 2vmin);
   font-family: "Tahoma";
+  animation-name: ${appearing};
+  animation-duration: 1s;
+`;
+// Label vencedor
+export const WinnerLabel = styled.h1`
+  color: white;
+  font-size: calc(15px + 2vmin);
+  animation-name: ${appearing};
+  animation-duration: 1s;
 `;
 
 // Tabuleiro do jogo

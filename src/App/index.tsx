@@ -33,8 +33,8 @@ const App = () => {
   const [winner, setWinner] = useState("");
   // Modo de jogo
   const [mode, setMode] = useState(0);
-  // Jogador (false = O, true = X)
-  const [player, setPlayer] = useState<boolean>();
+  // Jogador (0 = O, 1 = X)
+  const [player, setPlayer] = useState(0);
 
   /**
    * Função para verificar se alguém venceu
@@ -44,6 +44,9 @@ const App = () => {
     if (plays === 9) {
       // Define velha
       setWinner("Draw");
+      // Sai da função
+      return;
+      // Senão
     } else {
       // Se uma diagonal estiver completa por um jogador
       if (
@@ -65,7 +68,7 @@ const App = () => {
             // Define-o como vencedor
             setWinner(table[index][0]);
             // Sai da função
-            break;
+            return;
           }
           // Se a coluna estiver completa por um jogador
           if (
@@ -76,12 +79,18 @@ const App = () => {
             // Define-o como vencedor
             setWinner(table[0][index]);
             // Sai da função
-            break;
+            return;
           }
         }
       }
     }
-  }, [table, plays]);
+    // Se for a vez do Bot jogar
+    if (mode && player ^ plays % 2) {
+      // Bot joga
+      botPlays();
+    }
+    // eslint-disable-next-line
+  }, [table]);
 
   /**
    * Função para resetar se o modo de jogo mudar
@@ -115,6 +124,11 @@ const App = () => {
    * Reinicia jogo
    */
   const reset = () => {
+    // Se o modo de jogo não for 2P
+    if (mode) {
+      // Sorteia jogador
+      setPlayer(sort());
+    }
     // Limpa o tabuleiro
     setTable([
       ["", "", ""],
@@ -123,11 +137,34 @@ const App = () => {
     ]);
     // Reinicia jogadas
     setPlays(0);
-    // Se o modo de jogo não for 2P
-    if (mode) {
-      // Sorteia jogador
-      setPlayer(Boolean(Math.round(Math.random())));
+  };
+
+  /**
+   * Função para sortear um número inteiro entre 2 definidos
+   * @param min Número mínimo para sortear (default = 0)
+   * @param max Número máximo para sortear (default = 1)
+   * @returns Número inteiro sortido
+   */
+  const sort = (min: number = 0, max: number = 1) => {
+    // Retorna sorteio
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+
+  /**
+   * Jogada do Bot
+   */
+  const botPlays = () => {
+    // Sorteia linha e coluna
+    let row = sort(0, 2);
+    let column = sort(0, 2);
+    // Enquanto essa posição estiver ocupada
+    while (Boolean(table[row][column])) {
+      // Sorteia novamente
+      row = sort(0, 2);
+      column = sort(0, 2);
     }
+    // Seleciona posição
+    selectPosition(row, column);
   };
 
   return (
@@ -180,7 +217,7 @@ const App = () => {
         {/* Lateral direita */}
         <Aside>
           {/* Quem é o jogador */}
-          {Boolean(mode) && (
+          {Boolean(mode) && !Boolean(winner) && (
             <AsideDiv>
               <AppearingLabel>You're</AppearingLabel>
               <Player>{player ? "X" : "O"}</Player>

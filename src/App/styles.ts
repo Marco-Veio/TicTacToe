@@ -43,8 +43,8 @@ export const Aside = styled.div`
   align-items: center;
   color: white;
 `;
-// Div do modo de jogo
-export const Mode = styled.div`
+// Div do dentro das laterais
+export const AsideDiv = styled.div`
   width: 100%;
   flex: 0.2;
   display: flex;
@@ -53,7 +53,7 @@ export const Mode = styled.div`
   padding-bottom: 30px;
 `;
 // Seleção modo de jogo
-export const SelectMode = styled.select`
+export const Mode = styled.select`
   flex: 0.5;
   width: 100%;
   min-height: 30px;
@@ -92,7 +92,7 @@ export const Label = styled.h1`
 // Jogador
 export const Player = styled.h1`
   color: white;
-  font-size: calc(15px + 2vmin);
+  font-size: calc(30px + 2vmin);
   font-family: "Tahoma";
   animation-name: ${appearing};
   animation-duration: 1s;

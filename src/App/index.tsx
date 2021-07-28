@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import {
   AppearingLabel,
   Aside,
+  AsideDiv,
   Body,
   Button,
   Header,
@@ -12,7 +13,6 @@ import {
   Play,
   Player,
   Screen,
-  SelectMode,
   Table,
 } from "./styles";
 
@@ -31,6 +31,10 @@ const App = () => {
   ]);
   // Vencedor
   const [winner, setWinner] = useState("");
+  // Modo de jogo
+  const [mode, setMode] = useState(0);
+  // Jogador (false = O, true = X)
+  const [player, setPlayer] = useState<boolean>();
 
   /**
    * Função para verificar se alguém venceu
@@ -80,6 +84,14 @@ const App = () => {
   }, [table, plays]);
 
   /**
+   * Função para resetar se o modo de jogo mudar
+   */
+  useEffect(() => {
+    reset();
+    // eslint-disable-next-line
+  }, [mode]);
+
+  /**
    * Função para selecionar uma posição
    * @param row Número da linha da posição desejada
    * @param column Número da coluna da posição desejada
@@ -109,8 +121,13 @@ const App = () => {
       ["", "", ""],
       ["", "", ""],
     ]);
-    // Reinicia jogadas e define jogador como O
+    // Reinicia jogadas
     setPlays(0);
+    // Se o modo de jogo não for 2P
+    if (mode) {
+      // Sorteia jogador
+      setPlayer(Boolean(Math.round(Math.random())));
+    }
   };
 
   return (
@@ -123,13 +140,16 @@ const App = () => {
         {/* Lateral esquerda */}
         <Aside>
           {/* Modo de jogo */}
-          <Mode>
+          <AsideDiv>
             <Label>Mode</Label>
-            <SelectMode>
-              <option>2 Players</option>
-              <option>Easy</option>
-            </SelectMode>
-          </Mode>
+            <Mode onChange={(e) => setMode(Number(e.target.value))}>
+              <option value={0}>2 Players</option>
+              <option value={1}>Easy</option>
+              <option value={2}>Medium</option>
+              <option value={3}>Hard</option>
+              <option value={4}>Impossible</option>
+            </Mode>
+          </AsideDiv>
           {/* Iniciar jogo */}
           <Play onClick={reset}>Play</Play>
         </Aside>
@@ -144,7 +164,7 @@ const App = () => {
                   key={`${rowIndex}${columnIndex}`}
                   // Seleciona posição ao clicar
                   onClick={() => selectPosition(rowIndex, columnIndex)}
-                  // Desabilitado quando já foi selecionada ou quando acabou o jogo
+                  // Desabilitado quando já foi selecionada, quando acabou o jogo
                   disabled={
                     Boolean(table[rowIndex][columnIndex]) || Boolean(winner)
                   }
@@ -159,11 +179,20 @@ const App = () => {
         </Table>
         {/* Lateral direita */}
         <Aside>
-          {/* JVencedor */}
-          {Boolean(winner) && winner !== "Draw" && (
-            <AppearingLabel>Winner</AppearingLabel>
+          {/* Quem é o jogador */}
+          {Boolean(mode) && (
+            <AsideDiv>
+              <AppearingLabel>You're</AppearingLabel>
+              <Player>{player ? "X" : "O"}</Player>
+            </AsideDiv>
           )}
-          {Boolean(winner) && <Player>{winner}</Player>}
+          {/* Vencedor */}
+          {Boolean(winner) && (
+            <AsideDiv>
+              {winner !== "Draw" && <AppearingLabel>Winner</AppearingLabel>}
+              <Player>{winner}</Player>
+            </AsideDiv>
+          )}
         </Aside>
       </Body>
     </Screen>

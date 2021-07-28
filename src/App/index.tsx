@@ -40,48 +40,46 @@ const App = () => {
    * Função para verificar se alguém venceu
    */
   useEffect(() => {
-    // Se atingiram 9 jogadas
-    if (plays === 9) {
-      // Define velha
-      setWinner("Draw");
-      // Sai da função
-      return;
+    // Se uma diagonal estiver completa por um jogador
+    if (
+      (table[0][0] === table[1][1] && table[1][1] === table[2][2]) ||
+      (table[0][2] === table[1][1] && table[1][1] === table[2][0])
+    ) {
+      // Define-o como vencedor
+      setWinner(table[1][1]);
       // Senão
     } else {
-      // Se uma diagonal estiver completa por um jogador
-      if (
-        (table[0][0] === table[1][1] && table[1][1] === table[2][2]) ||
-        (table[0][2] === table[1][1] && table[1][1] === table[2][0])
-      ) {
-        // Define-o como vencedor
-        setWinner(table[1][1]);
-        // Senão
-      } else {
-        // Para cada linha e coluna
-        for (const index in table[0]) {
-          // Se a linha estiver completa por um jogador
-          if (
-            table[index][0] !== "" &&
-            table[index][0] === table[index][1] &&
-            table[index][1] === table[index][2]
-          ) {
-            // Define-o como vencedor
-            setWinner(table[index][0]);
-            // Sai da função
-            return;
-          }
-          // Se a coluna estiver completa por um jogador
-          if (
-            table[0][index] !== "" &&
-            table[0][index] === table[1][index] &&
-            table[1][index] === table[2][index]
-          ) {
-            // Define-o como vencedor
-            setWinner(table[0][index]);
-            // Sai da função
-            return;
-          }
+      // Para cada linha e coluna
+      for (const index in table) {
+        // Se a linha estiver completa por um jogador
+        if (
+          table[index][0] !== "" &&
+          table[index][0] === table[index][1] &&
+          table[index][1] === table[index][2]
+        ) {
+          // Define-o como vencedor
+          setWinner(table[index][0]);
+          // Sai da função
+          return;
         }
+        // Se a coluna estiver completa por um jogador
+        if (
+          table[0][index] !== "" &&
+          table[0][index] === table[1][index] &&
+          table[1][index] === table[2][index]
+        ) {
+          // Define-o como vencedor
+          setWinner(table[0][index]);
+          // Sai da função
+          return;
+        }
+      }
+      // Se atingiram 9 jogadas
+      if (plays === 9) {
+        // Define velha
+        setWinner("Draw");
+        // Sai da função
+        return;
       }
     }
     // Se for a vez do Bot jogar
@@ -154,6 +152,23 @@ const App = () => {
    * Jogada do Bot
    */
   const botPlays = () => {
+    // Se o bot estiver acima do fácil
+    if (mode > 1) {
+      // Verifica onde o jogo irá acabar
+      const missingOne = checkMissingOne();
+      // Se houver como ganhar ou impedir a derrota
+      if (missingOne.win[0] || missingOne.lose[0]) {
+        // Recebe linha e coluna priorizando a vitória
+        const row = Number(missingOne[missingOne.win[0] ? "win" : "lose"][1]);
+        const column = Number(
+          missingOne[missingOne.win[0] ? "win" : "lose"][2]
+        );
+        // Seleciona posição
+        selectPosition(row, column);
+        // Sai da função
+        return;
+      }
+    }
     // Sorteia linha e coluna
     let row = sort(0, 2);
     let column = sort(0, 2);
@@ -165,6 +180,307 @@ const App = () => {
     }
     // Seleciona posição
     selectPosition(row, column);
+    // Sai da função
+    return;
+  };
+
+  const checkMissingOne = () => {
+    // Inicia saída informando se o bot pode ganhar ou perder e onde jogar
+    const output = {
+      win: [false, 0, 0],
+      lose: [false, 0, 0],
+    };
+    // Cria cópia do tabuleiro
+    const temp = [...table];
+    // Se for vencer na primeira casa
+    if (
+      !temp[0][0] &&
+      ((temp[0][1] &&
+        player !== (temp[0][1] === "X" ? 1 : 0) &&
+        temp[0][1] === temp[0][2]) ||
+        (temp[1][0] &&
+          player !== (temp[1][0] === "X" ? 1 : 0) &&
+          temp[1][0] === temp[2][0]) ||
+        (temp[1][1] &&
+          player !== (temp[1][1] === "X" ? 1 : 0) &&
+          temp[1][1] === temp[2][2]))
+    ) {
+      // Define posição de vitória
+      output.win = [true, 0, 0];
+      // Retorna saída
+      return output;
+    }
+    // Se for perder na primeira casa
+    if (
+      !temp[0][0] &&
+      ((temp[0][1] &&
+        player === (temp[0][1] === "X" ? 1 : 0) &&
+        temp[0][1] === temp[0][2]) ||
+        (temp[1][0] &&
+          player === (temp[1][0] === "X" ? 1 : 0) &&
+          temp[1][0] === temp[2][0]) ||
+        (temp[1][1] &&
+          player === (temp[1][1] === "X" ? 1 : 0) &&
+          temp[1][1] === temp[2][2]))
+    ) {
+      // Define posição de derrota
+      output.lose = [true, 0, 0];
+    }
+    // Se for vencer na segunda casa
+    if (
+      !temp[0][1] &&
+      ((temp[0][2] &&
+        player !== (temp[0][2] === "X" ? 1 : 0) &&
+        temp[0][2] === temp[0][0]) ||
+        (temp[1][1] &&
+          player !== (temp[1][1] === "X" ? 1 : 0) &&
+          temp[1][1] === temp[2][1]))
+    ) {
+      // Define posição de vitória
+      output.win = [true, 0, 1];
+      // Retorna saída
+      return output;
+    }
+    // Se for perder na segunda casa
+    if (
+      !temp[0][1] &&
+      ((temp[0][2] &&
+        player === (temp[0][2] === "X" ? 1 : 0) &&
+        temp[0][2] === temp[0][0]) ||
+        (temp[1][1] &&
+          player === (temp[1][1] === "X" ? 1 : 0) &&
+          temp[1][1] === temp[2][1]))
+    ) {
+      // Define posição de derrota
+      output.lose = [true, 0, 1];
+    }
+    // Se for vencer na terceira casa
+    if (
+      !temp[0][2] &&
+      ((temp[0][0] &&
+        player !== (temp[0][0] === "X" ? 1 : 0) &&
+        temp[0][0] === temp[0][1]) ||
+        (temp[1][2] &&
+          player !== (temp[1][2] === "X" ? 1 : 0) &&
+          temp[1][2] === temp[2][2]) ||
+        (temp[1][1] &&
+          player !== (temp[1][1] === "X" ? 1 : 0) &&
+          temp[1][1] === temp[2][0]))
+    ) {
+      // Define posição de vitória
+      output.win = [true, 0, 2];
+      // Retorna saída
+      return output;
+    }
+    // Se for perder na terceira casa
+    if (
+      !temp[0][2] &&
+      ((temp[0][0] &&
+        player === (temp[0][0] === "X" ? 1 : 0) &&
+        temp[0][0] === temp[0][1]) ||
+        (temp[1][2] &&
+          player === (temp[1][2] === "X" ? 1 : 0) &&
+          temp[1][2] === temp[2][2]) ||
+        (temp[1][1] &&
+          player === (temp[1][1] === "X" ? 1 : 0) &&
+          temp[1][1] === temp[2][0]))
+    ) {
+      // Define posição de derrota
+      output.lose = [true, 0, 2];
+    }
+    // Se for vencer na quarta casa
+    if (
+      !temp[1][0] &&
+      ((temp[1][1] &&
+        player !== (temp[1][1] === "X" ? 1 : 0) &&
+        temp[1][1] === temp[1][2]) ||
+        (temp[2][0] &&
+          player !== (temp[2][0] === "X" ? 1 : 0) &&
+          temp[2][0] === temp[0][0]))
+    ) {
+      // Define posição de vitória
+      output.win = [true, 1, 0];
+      // Retorna saída
+      return output;
+    }
+    // Se for perder na quarta casa
+    if (
+      !temp[1][0] &&
+      ((temp[1][1] &&
+        player === (temp[1][1] === "X" ? 1 : 0) &&
+        temp[1][1] === temp[1][2]) ||
+        (temp[2][0] &&
+          player === (temp[2][0] === "X" ? 1 : 0) &&
+          temp[2][0] === temp[0][0]))
+    ) {
+      // Define posição de derrota
+      output.lose = [true, 1, 0];
+    }
+    // Se for vencer na quinta casa
+    if (
+      !temp[1][1] &&
+      ((temp[1][2] &&
+        player !== (temp[1][2] === "X" ? 1 : 0) &&
+        temp[1][2] === temp[1][0]) ||
+        (temp[2][1] &&
+          player !== (temp[2][1] === "X" ? 1 : 0) &&
+          temp[2][1] === temp[0][1]) ||
+        (temp[2][2] &&
+          player !== (temp[2][2] === "X" ? 1 : 0) &&
+          temp[2][2] === temp[0][0]) ||
+        (temp[2][0] &&
+          player !== (temp[2][0] === "X" ? 1 : 0) &&
+          temp[2][0] === temp[0][2]))
+    ) {
+      // Define posição de vitória
+      output.win = [true, 1, 1];
+      // Retorna saída
+      return output;
+    }
+    // Se for perder na quinta casa
+    if (
+      !temp[1][1] &&
+      ((temp[1][2] &&
+        player === (temp[1][2] === "X" ? 1 : 0) &&
+        temp[1][2] === temp[1][0]) ||
+        (temp[2][1] &&
+          player === (temp[2][1] === "X" ? 1 : 0) &&
+          temp[2][1] === temp[0][1]) ||
+        (temp[2][2] &&
+          player === (temp[2][2] === "X" ? 1 : 0) &&
+          temp[2][2] === temp[0][0]) ||
+        (temp[2][0] &&
+          player === (temp[2][0] === "X" ? 1 : 0) &&
+          temp[2][0] === temp[0][2]))
+    ) {
+      // Define posição de derrota
+      output.lose = [true, 1, 1];
+    }
+    // Se for vencer na sexta casa
+    if (
+      !temp[1][2] &&
+      ((temp[1][0] &&
+        player !== (temp[1][0] === "X" ? 1 : 0) &&
+        temp[1][0] === temp[1][1]) ||
+        (temp[2][2] &&
+          player !== (temp[2][2] === "X" ? 1 : 0) &&
+          temp[2][2] === temp[0][2]))
+    ) {
+      // Define posição de vitória
+      output.win = [true, 1, 2];
+      // Retorna saída
+      return output;
+    }
+    // Se for perder na sexta casa
+    if (
+      !temp[1][2] &&
+      ((temp[1][0] &&
+        player === (temp[1][0] === "X" ? 1 : 0) &&
+        temp[1][0] === temp[1][1]) ||
+        (temp[2][2] &&
+          player === (temp[2][2] === "X" ? 1 : 0) &&
+          temp[2][2] === temp[0][2]))
+    ) {
+      // Define posição de derrota
+      output.lose = [true, 1, 2];
+    }
+    // Se for vencer na sétima casa
+    if (
+      !temp[2][0] &&
+      ((temp[2][1] &&
+        player !== (temp[2][1] === "X" ? 1 : 0) &&
+        temp[2][1] === temp[2][2]) ||
+        (temp[0][0] &&
+          player !== (temp[0][0] === "X" ? 1 : 0) &&
+          temp[0][0] === temp[1][0]) ||
+        (temp[0][2] &&
+          player !== (temp[0][2] === "X" ? 1 : 0) &&
+          temp[0][2] === temp[1][1]))
+    ) {
+      // Define posição de vitória
+      output.win = [true, 2, 0];
+      // Retorna saída
+      return output;
+    }
+    // Se for perder na sétima casa
+    if (
+      !temp[2][0] &&
+      ((temp[2][1] &&
+        player === (temp[2][1] === "X" ? 1 : 0) &&
+        temp[2][1] === temp[2][2]) ||
+        (temp[0][0] &&
+          player === (temp[0][0] === "X" ? 1 : 0) &&
+          temp[0][0] === temp[1][0]) ||
+        (temp[0][2] &&
+          player === (temp[0][2] === "X" ? 1 : 0) &&
+          temp[0][2] === temp[1][1]))
+    ) {
+      // Define posição de derrota
+      output.lose = [true, 2, 0];
+    }
+    // Se for vencer na oitava casa
+    if (
+      !temp[2][1] &&
+      ((temp[2][2] &&
+        player !== (temp[2][2] === "X" ? 1 : 0) &&
+        temp[2][2] === temp[2][0]) ||
+        (temp[0][1] &&
+          player !== (temp[0][1] === "X" ? 1 : 0) &&
+          temp[0][1] === temp[1][1]))
+    ) {
+      // Define posição de vitória
+      output.win = [true, 2, 1];
+      // Retorna saída
+      return output;
+    }
+    // Se for perder na oitava casa
+    if (
+      !temp[2][1] &&
+      ((temp[2][2] &&
+        player === (temp[2][2] === "X" ? 1 : 0) &&
+        temp[2][2] === temp[2][0]) ||
+        (temp[0][1] &&
+          player === (temp[0][1] === "X" ? 1 : 0) &&
+          temp[0][1] === temp[1][1]))
+    ) {
+      // Define posição de derrota
+      output.lose = [true, 2, 1];
+    }
+    // Se for vencer na nona casa
+    if (
+      !temp[2][2] &&
+      ((temp[2][0] &&
+        player !== (temp[2][0] === "X" ? 1 : 0) &&
+        temp[2][0] === temp[2][1]) ||
+        (temp[0][2] &&
+          player !== (temp[0][2] === "X" ? 1 : 0) &&
+          temp[0][2] === temp[1][2]) ||
+        (temp[0][0] &&
+          player !== (temp[0][0] === "X" ? 1 : 0) &&
+          temp[0][0] === temp[1][1]))
+    ) {
+      // Define posição de vitória
+      output.win = [true, 2, 2];
+      // Retorna saída
+      return output;
+    }
+    // Se for perder na nona casa
+    if (
+      !temp[2][2] &&
+      ((temp[2][0] &&
+        player === (temp[2][0] === "X" ? 1 : 0) &&
+        temp[2][0] === temp[2][1]) ||
+        (temp[0][2] &&
+          player === (temp[0][2] === "X" ? 1 : 0) &&
+          temp[0][2] === temp[1][2]) ||
+        (temp[0][0] &&
+          player === (temp[0][0] === "X" ? 1 : 0) &&
+          temp[0][0] === temp[1][1]))
+    ) {
+      // Define posição de derrota
+      output.lose = [true, 2, 2];
+    }
+    return output;
   };
 
   return (

@@ -201,9 +201,14 @@ const App = () => {
                   key={`${rowIndex}${columnIndex}`}
                   // Seleciona posição ao clicar
                   onClick={() => selectPosition(rowIndex, columnIndex)}
-                  // Desabilitado quando já foi selecionada, quando acabou o jogo
+                  // Desabilitado
                   disabled={
-                    Boolean(table[rowIndex][columnIndex]) || Boolean(winner)
+                    // Quando já foi selecionada
+                    Boolean(table[rowIndex][columnIndex]) ||
+                    // Quando acabou o jogo
+                    Boolean(winner) ||
+                    // Quando não é a vez do jogador
+                    Boolean(mode && player ^ plays % 2)
                   }
                 >
                   {/* Jogador que selecionou */}

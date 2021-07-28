@@ -2,20 +2,23 @@
 import React, { useEffect, useState } from "react";
 // Import componentes estilizados
 import {
+  AppearingLabel,
   Aside,
   Body,
   Button,
   Header,
+  Label,
+  Mode,
   Play,
+  Player,
   Screen,
+  SelectMode,
   Table,
-  Winner,
-  WinnerLabel,
 } from "./styles";
 
 /**
  * Componente da página
- * @returns Tela
+ * @returns Página
  */
 const App = () => {
   // Número de jogadas
@@ -74,7 +77,7 @@ const App = () => {
         }
       }
     }
-  }, [table]);
+  }, [table, plays]);
 
   /**
    * Função para selecionar uma posição
@@ -117,7 +120,17 @@ const App = () => {
       <Header>Tic Tac Toe</Header>
       {/* Corpo da tela */}
       <Body>
+        {/* Lateral esquerda */}
         <Aside>
+          {/* Modo de jogo */}
+          <Mode>
+            <Label>Mode</Label>
+            <SelectMode>
+              <option>2 Players</option>
+              <option>Easy</option>
+            </SelectMode>
+          </Mode>
+          {/* Iniciar jogo */}
           <Play onClick={reset}>Play</Play>
         </Aside>
         {/* Tabuleiro */}
@@ -144,11 +157,13 @@ const App = () => {
             return components;
           })}
         </Table>
+        {/* Lateral direita */}
         <Aside>
+          {/* JVencedor */}
           {Boolean(winner) && winner !== "Draw" && (
-            <WinnerLabel>Winner</WinnerLabel>
+            <AppearingLabel>Winner</AppearingLabel>
           )}
-          {Boolean(winner) && <Winner>{winner}</Winner>}
+          {Boolean(winner) && <Player>{winner}</Player>}
         </Aside>
       </Body>
     </Screen>

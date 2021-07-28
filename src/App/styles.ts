@@ -6,7 +6,6 @@ const appearing = keyframes`
   from {
     opacity: 0;
     font-size: 0;
-
   }
   to {
     opacity: 1;
@@ -34,16 +33,6 @@ export const Header = styled.h1`
   color: white;
 `;
 
-// Body
-export const Body = styled.div`
-  width: 100%;
-  flex: 0.9;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-`;
-
 // Posição lateral do corpo
 export const Aside = styled.div`
   flex: 0.2;
@@ -54,9 +43,34 @@ export const Aside = styled.div`
   align-items: center;
   color: white;
 `;
+// Div do modo de jogo
+export const Mode = styled.div`
+  width: 100%;
+  flex: 0.2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 30px;
+`;
+// Seleção modo de jogo
+export const SelectMode = styled.select`
+  flex: 0.5;
+  width: 100%;
+  min-height: 30px;
+  border-radius: 1.8vw;
+  background-color: #474b53;
+  cursor: pointer;
+  color: white;
+  font-size: calc(15px + 2vmin);
+  box-shadow: 3px 3px 0 1px rgba(0, 0, 0, 0.2);
+  padding: 0 20px;
+  :hover {
+    opacity: 0.7;
+  }
+`;
 // Botão de jogar
 export const Play = styled.button`
-  flex: 0.1;
+  flex: 0.08;
   width: 100%;
   min-height: 30px;
   border-radius: 1.8vw;
@@ -69,27 +83,42 @@ export const Play = styled.button`
     opacity: 0.7;
   }
 `;
-// Vencedor
-export const Winner = styled.h1`
+// Escritas laterais
+export const Label = styled.h1`
+  flex: 0.5;
+  color: white;
+  font-size: calc(15px + 2vmin);
+`;
+// Jogador
+export const Player = styled.h1`
   color: white;
   font-size: calc(15px + 2vmin);
   font-family: "Tahoma";
   animation-name: ${appearing};
   animation-duration: 1s;
 `;
-// Label vencedor
-export const WinnerLabel = styled.h1`
+// Escritas Laterais com animação de aparecer
+export const AppearingLabel = styled.h1`
   color: white;
   font-size: calc(15px + 2vmin);
   animation-name: ${appearing};
   animation-duration: 1s;
 `;
 
+// Body
+export const Body = styled.div`
+  width: 100%;
+  flex: 0.9;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+`;
 // Tabuleiro do jogo
 export const Table = styled.div`
   grid-template: table;
-  width: 50vh;
-  height: 50vh;
+  width: 50vmin;
+  height: 50vmin;
   min-width: calc(105px + 3.2vh);
   min-height: calc(105px + 3.2vh);
   background-color: #000000;

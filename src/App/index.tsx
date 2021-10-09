@@ -175,8 +175,8 @@ const App = () => {
 
     // Se o bot estiver acima do médio
     if (mode > 2) {
-      // Se o meio estiver livre
-      if (!Boolean(table[1][1])) {
+      // Se o bot for x e o meio estiver livre
+      if (!player && !Boolean(table[1][1])) {
         // Seleciona meio
         selectPosition(1, 1);
         // Sai da função

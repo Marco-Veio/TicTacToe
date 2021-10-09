@@ -152,6 +152,9 @@ const App = () => {
    * Jogada do Bot
    */
   const botPlays = () => {
+    // Inicia posições a jogar
+    let row = 0,
+      column = 0;
     // Se o bot estiver acima do fácil
     if (mode > 1) {
       // Verifica onde o jogo irá acabar
@@ -169,15 +172,65 @@ const App = () => {
         return;
       }
     }
+
+    // Se o bot estiver acima do médio
+    if (mode > 2) {
+      // Se o meio estiver livre
+      if (!Boolean(table[1][1])) {
+        // Seleciona meio
+        selectPosition(1, 1);
+        // Sai da função
+        return;
+      }
+      // Define posições boas
+      const goodPositions = player
+        ? [
+            [0, 0],
+            [0, 2],
+            [2, 0],
+            [2, 2],
+          ]
+        : [
+            [0, 1],
+            [1, 0],
+            [1, 2],
+            [2, 1],
+          ];
+      // Inicia posições boas desocupadas
+      const freeGoodPosition = [] as number[][];
+      // Procura por posição boa
+      for (const goodPosition of goodPositions) {
+        // Se a posição estiver desocupada
+        if (!Boolean(table[goodPosition[0]][goodPosition[1]])) {
+          // Adiciona nas posições boas desocupadas
+          freeGoodPosition.push(goodPosition);
+        }
+      }
+
+      // Se houver posição boa desocupada
+      if (freeGoodPosition.length) {
+        // Sorteia uma delas
+        const position = sort(0, freeGoodPosition.length - 1);
+        // Seleciona posição boa
+        selectPosition(
+          freeGoodPosition[position][0],
+          freeGoodPosition[position][1]
+        );
+        // Sai da função
+        return;
+      }
+    }
+
     // Sorteia linha e coluna
-    let row = sort(0, 2);
-    let column = sort(0, 2);
+    row = sort(0, 2);
+    column = sort(0, 2);
     // Enquanto essa posição estiver ocupada
     while (Boolean(table[row][column])) {
       // Sorteia novamente
       row = sort(0, 2);
       column = sort(0, 2);
     }
+
     // Seleciona posição
     selectPosition(row, column);
     // Sai da função

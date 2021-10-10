@@ -175,46 +175,46 @@ const App = () => {
 
     // Se o bot estiver acima do médio
     if (mode > 2) {
-      // Se o bot for x e o meio estiver livre
-      if (!player && !Boolean(table[1][1])) {
-        // Seleciona meio
-        selectPosition(1, 1);
-        // Sai da função
-        return;
-      }
       // Define posições boas
-      const goodPositions = player
-        ? [
-            [0, 0],
-            [0, 2],
-            [2, 0],
-            [2, 2],
-          ]
-        : [
-            [0, 1],
-            [1, 0],
-            [1, 2],
-            [2, 1],
-          ];
+      const goodPositions = [
+        [0, 0],
+        [0, 2],
+        [2, 0],
+        [2, 2],
+      ];
+
       // Inicia posições boas desocupadas
-      const freeGoodPosition = [] as number[][];
+      const freeGoodPositions = [] as number[][];
       // Procura por posição boa
       for (const goodPosition of goodPositions) {
         // Se a posição estiver desocupada
         if (!Boolean(table[goodPosition[0]][goodPosition[1]])) {
           // Adiciona nas posições boas desocupadas
-          freeGoodPosition.push(goodPosition);
+          freeGoodPositions.push(goodPosition);
         }
       }
 
       // Se houver posição boa desocupada
-      if (freeGoodPosition.length) {
+      if (freeGoodPositions.length) {
+        // Para cada posição boa desocupada
+        for (const position of freeGoodPositions) {
+          // Recebe linhas e colunas opostas
+          const row = position[0] ? 0 : 2;
+          const column = position[1] ? 0 : 2;
+          // Se a oposta estiver ocupada
+          if (Boolean(table[row][column])) {
+            // Seleciona a posição
+            selectPosition(position[0], position[1]);
+            // Sai da função
+            return;
+          }
+        }
         // Sorteia uma delas
-        const position = sort(0, freeGoodPosition.length - 1);
+        const position = sort(0, freeGoodPositions.length - 1);
         // Seleciona posição boa
         selectPosition(
-          freeGoodPosition[position][0],
-          freeGoodPosition[position][1]
+          freeGoodPositions[position][0],
+          freeGoodPositions[position][1]
         );
         // Sai da função
         return;

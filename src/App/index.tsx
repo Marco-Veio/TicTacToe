@@ -176,15 +176,52 @@ const App = () => {
     // Se o bot estiver acima do médio
     if (mode > 2) {
       // Define posições boas
-      const goodPositions = [
+      let goodPositions = [
         [0, 0],
         [0, 2],
         [2, 0],
         [2, 2],
       ];
 
-      // Inicia posições boas desocupadas
+      // Se o bot estiver acima do difícil
+      if (mode > 3) {
+        // Inicia posições boas ocupadas pelo jogador
+        const playerGoodPositions = [] as number[][];
+
+        // Procura por posição boa
+        for (const goodPosition of goodPositions) {
+          // Se o player for O e tiver ocupado a posição boa
+          if (!player && table[goodPosition[0]][goodPosition[1]] === "O") {
+            // Adiciona posições boas ocupadas pelo jogador
+            playerGoodPositions.push(goodPosition);
+          }
+        }
+
+        // Se houver posição boa ocupada pelo jogador
+        if (playerGoodPositions.length) {
+          // Se for a segunda jogada
+          if (plays === 1) {
+            // Seleciona meio
+            selectPosition(1, 1);
+            // Sai da função
+            return;
+          }
+          // Se for a quarta e o meio não for do jogador
+          if (plays === 3 && table[1][1] !== "O") {
+            // Muda posições boas
+            goodPositions = [
+              [0, 1],
+              [1, 0],
+              [1, 2],
+              [2, 1],
+            ];
+          }
+        }
+      }
+
+      // Inicia posições boas
       const freeGoodPositions = [] as number[][];
+
       // Procura por posição boa
       for (const goodPosition of goodPositions) {
         // Se a posição estiver desocupada
